@@ -1,0 +1,82 @@
+<div class="container">
+    <!-- Workout Form -->
+    <form [formGroup]="workoutForm" (ngSubmit)="submitWorkout()">
+      <mat-form-field>
+        <mat-label>User Name</mat-label>
+        <input matInput formControlName="userName" />
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-label>Workout Type</mat-label>
+        <mat-select formControlName="workoutType" multiple>
+          <mat-option *ngFor="let type of workoutTypes" [value]="type">
+            {{ type }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-label>Workout Minutes</mat-label>
+        <input matInput type="number" formControlName="workoutMinutes" />
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" type="submit" [disabled]="workoutForm.invalid">
+        Add Workout
+      </button>
+    </form>
+  
+    <!-- Search & Filter -->
+    <div class="filters">
+      <mat-form-field>
+        <mat-label>Search</mat-label>
+        <input matInput #searchInput (keyup)="applyFilter(searchInput.value)" />
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-label>Filter by Workout Type</mat-label>
+        <mat-select (selectionChange)="filterByType(searchInput.value)">
+          <mat-option value="All">All</mat-option>
+          <mat-option *ngFor="let type of workoutTypes" [value]="type">
+            {{ type }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  
+    <!-- Workout List Table -->
+    <table mat-table [dataSource]="filteredWorkouts" class="mat-elevation-z8">
+      <ng-container matColumnDef="userName">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let workout">{{ workout.userName }}</td>
+      </ng-container>
+  
+      <ng-container matColumnDef="workoutType">
+        <th mat-header-cell *matHeaderCellDef>Workouts</th>
+        <td mat-cell *matCellDef="let workout">{{ workout.workoutType.join(', ') }}</td>
+      </ng-container>
+  
+      <ng-container matColumnDef="workoutMinutes">
+        <th mat-header-cell *matHeaderCellDef>Total Workout Minutes</th>
+        <td mat-cell *matCellDef="let workout">{{ workout.workoutMinutes }}</td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  
+    <!-- Pagination -->
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  
+    <!-- Workout Progress Chart -->
+     <h2>Work chart representation</h2>
+     <div class="chart-container">
+        <canvas baseChart
+                [data]="workoutChartConfig.data"
+                [options]="workoutChartConfig.options"
+                chartType="line">
+        </canvas>
+      </div>
+      
+  
+  </div>
+  
